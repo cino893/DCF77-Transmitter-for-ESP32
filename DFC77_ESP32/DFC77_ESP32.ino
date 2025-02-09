@@ -25,7 +25,8 @@
                           // otherwise use <> or comment it and write your credentials directly on code
                           // const char* ssid = "YourOwnSSID";
                           // const char* password = "YourSoSecretPassword";
-                          
+
+#define DRAINPIN D0
 // #define LEDBUILTIN 5      // LED pin, LED flashes when antenna is transmitting
                           // C3 has no controllable build IN LED - use serial to debug
 #define ANTENNAPIN D6     // Antenna pin. Connect antenna from here to ground, use a 1k resistor to limit transmitting power. A slightly tuned ferrite antenna gets around 3 meters and a wire loop may work if close enough.
@@ -83,11 +84,12 @@ Serial.println("Fail to set cpu frequency");
 
   ledcAttach(ANTENNAPIN, 77500, 8); // Set pin PWM, 77500hz DCF freq, resolution of 8bit
 
-  ledcWrite(ANTENNAPIN, 0);
+  ledcWrite(ANTENNAPIN, 277);
   signalE = '0';
 
 //  pinMode (LEDBUILTIN, OUTPUT);
 //  digitalWrite (LEDBUILTIN, LOW); // LOW if LEDBUILTIN is inverted like in Wemos boards
+  pinMode(DRAINPIN, OUTPUT);
 
   WiFi_on();
   getNTP();
@@ -243,21 +245,21 @@ void DcfOut() {
     case 0:
       if (impulseArray[actualSecond] != 0) {
 //        digitalWrite(LEDBUILTIN, LOW);
-        ledcWrite(ANTENNAPIN, 0);
+        pinMode(DRAINPIN, INPUT);
         signalE = '0';
       }
       break;
     case 1:
       if (impulseArray[actualSecond] == 1) {
 //        digitalWrite(LEDBUILTIN, HIGH);
-        ledcWrite(ANTENNAPIN, 127);
+        pinMode(DRAINPIN, OUTPUT);
         signalE = '1';
       }
       break;
     case 2:
       if (impulseArray[actualSecond] != 1) {
 //        digitalWrite(LEDBUILTIN, HIGH);
-        ledcWrite(ANTENNAPIN, 127);
+        pinMode(DRAINPIN, OUTPUT);
         signalE = '1';
       }
       break;
